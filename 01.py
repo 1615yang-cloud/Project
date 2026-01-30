@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 import scipy.stats as stats
 
+# ==========================================
+# 核心工具函数
+# ==========================================
+
 def calculate_scores(judges_scores, fan_votes, method):
     """
     计算综合得分
@@ -15,8 +19,7 @@ def calculate_scores(judges_scores, fan_votes, method):
         return judge_share + fan_votes
         
     elif method == 'rank':
-        # 排名积分法：分数越高积分越高 (Rank Points)
-        # 例如：4名选手，最高分得4分，最低分得1分
+        # 排名积分法：分数越高积分越高
         judge_points = stats.rankdata(judges_scores, method='min')
         fan_points = stats.rankdata(fan_votes, method='min')
         return judge_points + fan_points
@@ -24,7 +27,6 @@ def calculate_scores(judges_scores, fan_votes, method):
 def check_constraints_elimination(total_scores, fan_votes, eliminated_indices, method):
     """
     检查淘汰约束：被淘汰者的分数必须 <= 幸存者的分数
-    对于排名法，如果分数相同，粉丝投票低者被淘汰。
     """
     if not eliminated_indices:
         return True
@@ -35,7 +37,7 @@ def check_constraints_elimination(total_scores, fan_votes, eliminated_indices, m
     if not survivor_indices:
         return True
         
-    # 提取分数和投票
+    # 提取分数
     s_scores = total_scores[survivor_indices]
     e_scores = total_scores[eliminated_indices]
     
@@ -44,14 +46,11 @@ def check_constraints_elimination(total_scores, fan_votes, eliminated_indices, m
         return True
         
     if method == 'percentage':
-        # 百分比法通常是连续值，直接比较大小
         return np.min(s_scores) >= np.max(e_scores)
     
     else:
         # 排名法需要处理同分 (Tie-breaker)
-        # 约束：对于任意幸存者 S 和 被淘汰者 E：
-        # Score(S) > Score(E) 或 (Score(S) == Score(E) 且 Fan(S) > Fan(E))
-        
+        # 规则：分数相同时，粉丝投票低者被淘汰
         s_votes = fan_votes[survivor_indices]
         e_votes = fan_votes[eliminated_indices]
         
@@ -96,138 +95,147 @@ def check_constraints_ranking(total_scores, fan_votes, placements, method):
 # ==========================================
 # 主处理流程
 # ==========================================
-df = pd.read_csv('cleaned_DWTS_data.csv')
 
-# 预处理数据列
-df['eliminated_week'] = pd.to_numeric(
-    df['eliminated_week'].astype(str).str.extract('(\d+)')[0], errors='coerce'
-)
-df['placement'] = pd.to_numeric(df['placement'], errors='coerce')
+def main():
+    print("Loading data...")
+    df = pd.read_csv('cleaned_DWTS_data.csv')
 
-results_list = []
-n_samples = 2000 # 采样数量
-burn_in = 500    # 预热期
+    # 预处理数据列
+    df['eliminated_week'] = pd.to_numeric(
+        df['eliminated_week'].astype(str).str.extract(r'(\d+)')[0], errors='coerce'
+    )
+    df['placement'] = pd.to_numeric(df['placement'], errors='coerce')
 
-seasons = sorted(df['season'].unique())
+    results_list = []
+    n_samples = 2000 # 采样数量
+    burn_in = 500    # 预热期
 
-for season in seasons:
-    # 1. 确定方法
-    if 3 <= season <= 27:
-        method = 'percentage'
-    else:
-        method = 'rank'
-        
-    print(f"Processing Season {season} (Method: {method})...")
-    
-    # 获取该赛季所有周次
-    cols = [c for c in df.columns if c.startswith('total_score_w')]
-    weeks = sorted([int(c.split('w')[1]) for c in cols])
-    
-    for week in weeks:
-        score_col = f'total_score_w{week}'
-        if score_col not in df.columns: continue
-        
-        # 2. 筛选当周活跃选手 (分数 > 0)
-        current_df = df[df['season'] == season].copy()
-        current_df = current_df[current_df[score_col] > 0].reset_index(drop=True)
-        
-        if current_df.empty: continue
-            
-        names = current_df['celebrity_name'].values
-        judges_scores = current_df[score_col].values
-        n_contestants = len(names)
-        if n_contestants < 2: continue
+    seasons = sorted(df['season'].unique())
 
-        # 3. 确定约束类型
-        # 检查本周是否有淘汰
-        eliminated_mask = current_df['eliminated_week'] == week
-        eliminated_indices = np.where(eliminated_mask)[0].tolist()
-        
-        constraint_type = 'none'
-        if len(eliminated_indices) > 0:
-            constraint_type = 'elimination'
+    print(f"Starting inference for {len(seasons)} seasons...")
+
+    for season in seasons:
+        # 1. 确定方法
+        if 3 <= season <= 27:
+            method = 'percentage'
         else:
-            # 如果没有淘汰，检查是否是决赛（有最终排名）
-            results_vals = current_df['results'].astype(str).values
-            if any('Place' in r for r in results_vals):
-                constraint_type = 'ranking'
-                current_placements = current_df['placement'].values
-            else:
-                constraint_type = 'none'
+            method = 'rank'
+            
+        # 获取该赛季所有周次
+        cols = [c for c in df.columns if c.startswith('total_score_w')]
+        weeks = sorted([int(c.split('w')[1]) for c in cols])
         
-        if constraint_type == 'none': continue
+        for week in weeks:
+            score_col = f'total_score_w{week}'
+            if score_col not in df.columns: continue
+            
+            # 2. 筛选当周活跃选手 (分数 > 0)
+            current_df = df[df['season'] == season].copy()
+            current_df = current_df[current_df[score_col] > 0].reset_index(drop=True)
+            
+            if current_df.empty: continue
+                
+            names = current_df['celebrity_name'].values
+            judges_scores = current_df[score_col].values
+            n_contestants = len(names)
+            if n_contestants < 2: continue
 
-        # 4. MCMC 采样
-        samples = []
-        current_votes = np.random.dirichlet(np.ones(n_contestants))
-        
-        # 寻找合法的初始点
-        valid_start = False
-        for _ in range(1000):
-            scores = calculate_scores(judges_scores, current_votes, method)
-            if constraint_type == 'elimination':
-                if check_constraints_elimination(scores, current_votes, eliminated_indices, method):
-                    valid_start = True
-                    break
-            elif constraint_type == 'ranking':
-                if check_constraints_ranking(scores, current_votes, current_placements, method):
-                    valid_start = True
-                    break
+            # 3. 确定约束类型
+            eliminated_mask = current_df['eliminated_week'] == week
+            eliminated_indices = np.where(eliminated_mask)[0].tolist()
+            
+            constraint_type = 'none'
+            if len(eliminated_indices) > 0:
+                constraint_type = 'elimination'
+            else:
+                # 检查决赛排名
+                results_vals = current_df['results'].astype(str).values
+                if any('Place' in r for r in results_vals):
+                    constraint_type = 'ranking'
+                    current_placements = current_df['placement'].values
+                else:
+                    constraint_type = 'none'
+            
+            if constraint_type == 'none': continue
+
+            # 4. MCMC 采样
+            samples = []
             current_votes = np.random.dirichlet(np.ones(n_contestants))
             
-        if not valid_start:
-            # print(f"Warning: S{season} W{week} constraints valid start not found.")
-            continue
-            
-        # Metropolis-Hastings 循环
-        for i in range(n_samples + burn_in):
-            proposal = current_votes.copy()
-            # 随机扰动：选取两个人交换少量票数
-            idx1, idx2 = np.random.choice(n_contestants, 2, replace=False)
-            step = np.random.uniform(0, 0.05)
-            
-            if proposal[idx1] > step:
-                proposal[idx1] -= step
-                proposal[idx2] += step
-            else:
-                proposal[idx1] += step
-                proposal[idx2] -= step
-            
-            # 检查提议是否满足约束
-            scores_prop = calculate_scores(judges_scores, proposal, method)
-            is_valid = False
-            if constraint_type == 'elimination':
-                is_valid = check_constraints_elimination(scores_prop, proposal, eliminated_indices, method)
-            elif constraint_type == 'ranking':
-                is_valid = check_constraints_ranking(scores_prop, proposal, current_placements, method)
+            # 寻找合法的初始点
+            valid_start = False
+            for _ in range(1000):
+                scores = calculate_scores(judges_scores, current_votes, method)
+                if constraint_type == 'elimination':
+                    if check_constraints_elimination(scores, current_votes, eliminated_indices, method):
+                        valid_start = True
+                        break
+                elif constraint_type == 'ranking':
+                    if check_constraints_ranking(scores, current_votes, current_placements, method):
+                        valid_start = True
+                        break
+                current_votes = np.random.dirichlet(np.ones(n_contestants))
                 
-            if is_valid:
-                current_votes = proposal
+            if not valid_start:
+                continue
+                
+            # Metropolis-Hastings 循环
+            for i in range(n_samples + burn_in):
+                proposal = current_votes.copy()
+                idx1, idx2 = np.random.choice(n_contestants, 2, replace=False)
+                step = np.random.uniform(0, 0.05)
+                
+                if proposal[idx1] > step:
+                    proposal[idx1] -= step
+                    proposal[idx2] += step
+                else:
+                    proposal[idx1] += step
+                    proposal[idx2] -= step
+                
+                # 检查约束
+                scores_prop = calculate_scores(judges_scores, proposal, method)
+                is_valid = False
+                if constraint_type == 'elimination':
+                    is_valid = check_constraints_elimination(scores_prop, proposal, eliminated_indices, method)
+                elif constraint_type == 'ranking':
+                    is_valid = check_constraints_ranking(scores_prop, proposal, current_placements, method)
+                    
+                if is_valid:
+                    current_votes = proposal
+                
+                if i >= burn_in:
+                    samples.append(current_votes.copy())
             
-            if i >= burn_in:
-                samples.append(current_votes.copy())
-        
-        # 5. 统计结果
-        samples_np = np.array(samples)
-        if len(samples_np) == 0: continue
+            # 5. 统计结果
+            samples_np = np.array(samples)
+            if len(samples_np) == 0: continue
+                
+            means = samples_np.mean(axis=0)
+            lowers = np.percentile(samples_np, 2.5, axis=0)
+            uppers = np.percentile(samples_np, 97.5, axis=0)
+            # 计算确定性度量 (CI Width)
+            widths = uppers - lowers
             
-        means = samples_np.mean(axis=0)
-        lowers = np.percentile(samples_np, 2.5, axis=0)
-        uppers = np.percentile(samples_np, 97.5, axis=0)
-        
-        for idx, name in enumerate(names):
-            results_list.append({
-                'season': season,
-                'week': week,
-                'contestant': name,
-                'method': method,
-                'judges_score': judges_scores[idx],
-                'is_eliminated': idx in eliminated_indices,
-                'mean_fan_vote': means[idx],
-                'ci_lower': lowers[idx],
-                'ci_upper': uppers[idx]
-            })
+            for idx, name in enumerate(names):
+                results_list.append({
+                    'season': season,
+                    'week': week,
+                    'contestant': name,
+                    'method': method,
+                    'judges_score': judges_scores[idx],
+                    'is_eliminated': idx in eliminated_indices,
+                    'mean_fan_vote': means[idx],
+                    'ci_lower': lowers[idx],
+                    'ci_upper': uppers[idx],
+                    'ci_width': widths[idx]  # 新增：确定性度量 (值越小越确定)
+                })
 
-# 保存结果
-results_df = pd.DataFrame(results_list)
-results_df.to_csv('fan_votes_inference_v2.csv', index=False)
+    # 保存结果
+    results_df = pd.DataFrame(results_list)
+    output_file = 'fan_votes_inference_with_certainty.csv'
+    results_df.to_csv(output_file, index=False)
+    print(f"Finished! Results saved to {output_file}")
+    print(results_df.head())
+
+if __name__ == "__main__":
+    main()
