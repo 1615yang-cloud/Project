@@ -1,0 +1,7 @@
+,overall_avg_score,placement,celebrity_age_during_season,is_american,industry_performance,mean_fan_vote
+overall_avg_score,1.0,-0.939,-0.457,-0.009,0.329,0.809
+placement,-0.939,1.0,0.433,0.014,-0.286,-0.882
+celebrity_age_during_season,-0.457,0.433,1.0,0.052,-0.239,-0.345
+is_american,-0.009,0.014,0.052,1.0,0.058,0.031
+industry_performance,0.329,-0.286,-0.239,0.058,1.0,0.233
+mean_fan_vote,0.809,-0.882,-0.345,0.031,0.233,1.0
