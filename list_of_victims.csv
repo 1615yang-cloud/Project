@@ -1,0 +1,30 @@
+Season,Week,Contestant,Is_Controversial,Actual_Method,Counter_Method,Judges_Score,Judge_Rank,Inferred_Fan_Vote,Fan_Vote_Rank,Result_Actual,Result_Counter,Outcome_Changed,Bias_Actual_Kill_FanLoser,Bias_Counter_Kill_FanLoser
+2,3,Master P,False,rank,percentage,14.0,8,0.0885021285293158,7,Eliminated,Safe,True,False,False
+3,5,Willa Ford,False,percentage,rank,27.0,4,0.0194170471128826,7,Eliminated,Safe,True,True,False
+8,5,David Alan Grier,False,percentage,rank,22.0,6,0.0212585272172605,9,Eliminated,Safe,True,True,False
+9,7,Mark Dacascos,False,percentage,rank,21.5,7,0.0454101239000225,6,Eliminated,Safe,True,False,False
+11,6,Audrina Patridge,False,percentage,rank,31.9998,2,0.0252284639246121,7,Eliminated,Safe,True,True,False
+13,3,Kristin Cavallari,False,percentage,rank,24.0,7,0.0188024604057908,10,Eliminated,Safe,True,True,False
+14,9,Maria Menounos,False,percentage,rank,29.5,1,0.0924855332110613,4,Eliminated,Safe,True,True,False
+15,6,Sabrina Bryan,True,percentage,rank,30.0,2,0.0165018986760024,8,Eliminated,Safe,True,True,False
+15,9,Apolo Anton Ohno,False,percentage,rank,28.611,3,0.0784971149640614,5,Eliminated,Safe,True,True,False
+17,5,Christina Milian,False,percentage,rank,28.0,2,0.0185223391280881,9,Eliminated,Safe,True,True,False
+17,9,Elizabeth Berkley Lauren,False,percentage,rank,28.0,2,0.0363798823557647,6,Eliminated,Safe,True,True,False
+18,8,Danica McKellar,False,percentage,rank,38.0,3,0.0426633985097835,6,Eliminated,Safe,True,True,False
+20,2,Redfoo,False,percentage,rank,31.0,5,0.0053694817336543,12,Eliminated,Safe,True,True,False
+20,5,Suzanne Somers,False,percentage,rank,28.0,6,0.0236977915823457,9,Eliminated,Safe,True,True,False
+20,7,Willow Shields,True,percentage,rank,39.0,2,0.0284205041558439,7,Eliminated,Safe,True,True,False
+20,9,Nastia Liukin,False,percentage,rank,40.0,2,0.0637254580342178,4,Eliminated,Safe,True,True,False
+21,2,Victor Espinoza,False,percentage,rank,18.5,11,0.0110158077565929,13,Eliminated,Safe,True,True,False
+21,7,Hayes Grier,False,percentage,rank,28.0,4,0.0317242134364115,8,Eliminated,Safe,True,True,False
+21,9,Alexa PenaVega,False,percentage,rank,30.0,2,0.0324928794738651,6,Eliminated,Safe,True,True,False
+22,8,Jodie Sweetin,False,percentage,rank,30.0,2,0.0297033342662607,6,Eliminated,Safe,True,True,False
+22,9,Wanya Morris,False,percentage,rank,30.0,1,0.0741258559523925,5,Eliminated,Safe,True,True,False
+23,4,Vanilla Ice,False,percentage,rank,23.0,8,0.020096022082846,11,Eliminated,Safe,True,True,False
+24,6,Heather Morris,True,percentage,rank,37.0,1,0.0203796605318811,8,Eliminated,Safe,True,True,False
+24,9,Simone Biles,False,percentage,rank,40.0,1,0.0668447988551372,4,Eliminated,Safe,True,True,False
+27,4,Tinashe,False,percentage,rank,26.0,3,0.0140701278122773,10,Eliminated,Safe,True,True,False
+27,6,Mary Lou Retton,False,percentage,rank,24.0,6,0.0238192075540447,9,Eliminated,Safe,True,True,False
+27,7,John Schneider,False,percentage,rank,27.0,5,0.0451512478693499,8,Eliminated,Safe,True,True,False
+30,8,Jimmie Allen,False,rank,percentage,32.0,8,0.0593947931205706,7,Eliminated,Safe,True,False,False
+32,7,Charity Lawson,False,rank,percentage,36.0,5,0.0768123245427327,7,Eliminated,Safe,True,False,False

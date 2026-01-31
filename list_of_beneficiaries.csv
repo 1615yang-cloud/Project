@@ -1,0 +1,30 @@
+Season,Week,Contestant,Is_Controversial,Actual_Method,Counter_Method,Judges_Score,Judge_Rank,Inferred_Fan_Vote,Fan_Vote_Rank,Result_Actual,Result_Counter,Outcome_Changed,Bias_Actual_Kill_FanLoser,Bias_Counter_Kill_FanLoser
+2,3,Giselle Fernandez,False,rank,percentage,22.0,6,0.032760635233141,8,Safe,Eliminated,True,False,True
+3,5,Jerry Springer,False,percentage,rank,24.0,7,0.0880753591088603,6,Safe,Eliminated,True,False,False
+8,5,Lawrence Taylor,False,percentage,rank,20.0,8,0.1084780665396609,8,Safe,Eliminated,True,False,False
+9,7,Michael Irvin,False,percentage,rank,23.5,6,0.0391009965145084,7,Safe,Eliminated,True,False,True
+11,6,Bristol Palin,True,percentage,rank,27.9998,6,0.1082369867511405,6,Safe,Eliminated,True,False,False
+13,3,Chaz Bono,False,percentage,rank,18.0,10,0.0926528824155982,8,Safe,Eliminated,True,False,False
+14,9,Katherine Jenkins,False,percentage,rank,28.0,4,0.2715067182302201,3,Safe,Eliminated,True,False,False
+15,6,Gilles Marini,False,percentage,rank,27.5,6,0.0685301020403874,7,Safe,Eliminated,True,False,False
+15,9,Emmitt Smith,False,percentage,rank,27.0,5,0.0906848074323643,4,Safe,Eliminated,True,False,False
+17,5,Amber Riley,False,percentage,rank,26.0,7,0.0807379894088664,8,Safe,Eliminated,True,False,False
+17,9,Jack Osbourne,False,percentage,rank,27.0,4,0.1125703625068493,5,Safe,Eliminated,True,False,False
+18,8,Candace Cameron Bure,False,percentage,rank,36.0,6,0.1480041344183394,4,Safe,Eliminated,True,False,False
+20,2,Charlotte McKinney,False,percentage,rank,26.0,11,0.0683881611581068,8,Safe,Eliminated,True,False,False
+20,5,Chris Soules,False,percentage,rank,27.0,8,0.085702883322496,8,Safe,Eliminated,True,False,False
+20,7,Robert Herjavec,False,percentage,rank,31.0,7,0.1031179549829089,5,Safe,Eliminated,True,False,False
+20,9,Noah Galloway,False,percentage,rank,38.0,4,0.2232942657559815,3,Safe,Eliminated,True,False,False
+21,2,Chaka Khan,False,percentage,rank,15.0,13,0.0275911550018162,12,Safe,Eliminated,True,False,False
+21,7,Tamar Braxton,False,percentage,rank,27.0,7,0.1061729594644527,6,Safe,Eliminated,True,False,False
+21,9,Carlos PenaVega,False,percentage,rank,27.0,4,0.1432441928730846,5,Safe,Eliminated,True,False,False
+22,8,Wanya Morris,False,percentage,rank,25.0,6,0.1321883932456494,5,Safe,Eliminated,True,False,False
+22,9,Antonio Brown,False,percentage,rank,27.5,5,0.0926020593916131,4,Safe,Eliminated,True,False,False
+23,4,Babyface,False,percentage,rank,18.0,11,0.039300449169936,10,Safe,Eliminated,True,False,False
+24,6,David Ross,False,percentage,rank,31.0,7,0.13111277835184,3,Safe,Eliminated,True,False,False
+24,9,Normani,False,percentage,rank,38.0,3,0.233431345587723,3,Safe,Eliminated,True,False,False
+27,4,DeMarcus Ware,False,percentage,rank,22.0,7,0.0779163462921125,8,Safe,Eliminated,True,False,False
+27,6,Joe Amabile,False,percentage,rank,22.0,8,0.0832463675447309,8,Safe,Eliminated,True,False,False
+27,7,DeMarcus Ware,False,percentage,rank,26.5,7,0.0492900788487668,7,Safe,Eliminated,True,False,False
+30,8,Olivia Jade,False,rank,percentage,36.0,6,0.0368371359673629,8,Safe,Eliminated,True,False,True
+32,7,Lele Pons,False,rank,percentage,36.5,3,0.0254545829209551,8,Safe,Eliminated,True,False,True
